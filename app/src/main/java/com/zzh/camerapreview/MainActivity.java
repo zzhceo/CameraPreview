@@ -13,6 +13,7 @@ import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.media.ToneGenerator;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -27,10 +28,12 @@ import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.zzh.camerapreview.camera.CameraCallbacks;
@@ -52,10 +55,10 @@ import java.util.List;
 public class MainActivity extends Activity implements MediaRecorder.OnErrorListener,
         MediaRecorder.OnInfoListener, View.OnClickListener {
     private static final String TAG = "MainActivity";
+    private LinearLayout textureViewParent;
     private MyTextureView textureView1;
     private TextureView textureView2;
     private TextureView textureView3;
-    private SurfaceView surfaceView;
     Button btn;
     Button btn1;
     boolean isAllCameraPreviewing = true;
@@ -131,6 +134,8 @@ public class MainActivity extends Activity implements MediaRecorder.OnErrorListe
 
         initView();
         if (isShowPreviewFrameView) {
+            previewFrameView.setVisibility(View.VISIBLE);
+            findViewById(R.id.frame_view_bg).setVisibility(View.VISIBLE);
             findViewById(R.id.layout_top_btn).setVisibility(View.GONE);
             nv21ToBitmap = new NV21ToBitmap(this);
             previewFrameThread = new HandlerThread("FrameHandlerThread", Process.THREAD_PRIORITY_MORE_FAVORABLE);
@@ -146,9 +151,20 @@ public class MainActivity extends Activity implements MediaRecorder.OnErrorListe
     private void initView() {
         Log.d(TAG, "initView");
         previewFrameView = findViewById(R.id.img_preview_frame);
-        textureView1 = findViewById(R.id.sfv1);
-        textureView2 = findViewById(R.id.sfv2);
-        textureView3 = findViewById(R.id.sfv3);
+        textureViewParent = findViewById(R.id.textureview_parent);
+        textureView1 = new MyTextureView(this);
+        textureView2 = new TextureView(this);
+        textureView3 = new TextureView(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+        lp.weight = 1;
+        textureView1.setLayoutParams(lp);
+        textureView2.setLayoutParams(lp);
+        textureView3.setLayoutParams(lp);
+        textureView1.setVisibility(View.VISIBLE);
+        textureView2.setVisibility(View.GONE);
+        textureView3.setVisibility(View.GONE);
+
+
         btn = findViewById(R.id.btn);
         btn1 = findViewById(R.id.btn1);
         btnPreviewSize1 = findViewById(R.id.btn_previewsize1);
@@ -596,6 +612,9 @@ public class MainActivity extends Activity implements MediaRecorder.OnErrorListe
         super.onStart();
         textureViewList.clear();
         cameraHashMap.clear();
+        textureViewParent.addView(textureView1);
+        textureViewParent.addView(textureView2);
+        textureViewParent.addView(textureView3);
         // open camera id is 0 camera
         openCamera(textureView1, 0);
         // open camera id is 1 camera
@@ -609,12 +628,16 @@ public class MainActivity extends Activity implements MediaRecorder.OnErrorListe
             }
             audioRecordManager.startRecording();
         }
+        hideBottomUIMenu();
     }
 
     @Override
     protected void onStop() {
         Log.i(TAG, "onStop");
         super.onStop();
+        textureViewParent.removeView(textureView1);
+        textureViewParent.removeView(textureView2);
+        textureViewParent.removeView(textureView3);
         for (Integer integer : cameraHashMap.keySet()) {
             if (textureViewList.containsKey(integer) && textureViewList.get(integer) != null)
                 textureViewList.get(integer).setSurfaceTextureListener(null);
@@ -947,55 +970,59 @@ public class MainActivity extends Activity implements MediaRecorder.OnErrorListe
 
     @Override
     public void onClick(View v) {
+        if (isShowPreviewFrameView)
+            return;
+
+        if (v == textureView1) {
+            if (cameraInfoDialog != null && cameraInfoDialog.isShowing()) {
+                cameraInfoDialog.dismiss();
+            } else {
+                if (cameraHashMap != null) {
+                    for (Integer integer : cameraHashMap.keySet()) {
+                        Camera camera = cameraHashMap.get(integer);
+                        if (camera != null) {
+                            showCameraInfoDialog(integer, camera);
+                            break;
+                        }
+                    }
+                }
+            }
+            return;
+        } else if (v == textureView2) {
+            if (cameraInfoDialog != null && cameraInfoDialog.isShowing()) {
+                cameraInfoDialog.dismiss();
+            } else {
+                if (cameraHashMap != null) {
+                    int index = 0;
+                    for (Integer integer : cameraHashMap.keySet()) {
+                        Camera camera = cameraHashMap.get(integer);
+                        if (camera != null && index++ == 1) {
+                            showCameraInfoDialog(integer, camera);
+                            break;
+                        }
+                    }
+                }
+            }
+            return;
+        } else if (v == textureView3) {
+            if (cameraInfoDialog != null && cameraInfoDialog.isShowing()) {
+                cameraInfoDialog.dismiss();
+            } else {
+                if (cameraHashMap != null) {
+                    int index = 0;
+                    for (Integer integer : cameraHashMap.keySet()) {
+                        Camera camera = cameraHashMap.get(integer);
+                        if (camera != null && index++ == 2) {
+                            showCameraInfoDialog(integer, camera);
+                            break;
+                        }
+                    }
+                }
+            }
+            return;
+        }
         int viewId = v.getId();
         switch (viewId) {
-            case R.id.sfv1:
-                if (cameraInfoDialog != null && cameraInfoDialog.isShowing()) {
-                    cameraInfoDialog.dismiss();
-                } else {
-                    if (cameraHashMap != null) {
-                        for (Integer integer : cameraHashMap.keySet()) {
-                            Camera camera = cameraHashMap.get(integer);
-                            if (camera != null) {
-                                showCameraInfoDialog(integer, camera);
-                                break;
-                            }
-                        }
-                    }
-                }
-                break;
-            case R.id.sfv2:
-                if (cameraInfoDialog != null && cameraInfoDialog.isShowing()) {
-                    cameraInfoDialog.dismiss();
-                } else {
-                    if (cameraHashMap != null) {
-                        int index = 0;
-                        for (Integer integer : cameraHashMap.keySet()) {
-                            Camera camera = cameraHashMap.get(integer);
-                            if (camera != null && index++ == 1) {
-                                showCameraInfoDialog(integer, camera);
-                                break;
-                            }
-                        }
-                    }
-                }
-                break;
-            case R.id.sfv3:
-                if (cameraInfoDialog != null && cameraInfoDialog.isShowing()) {
-                    cameraInfoDialog.dismiss();
-                } else {
-                    if (cameraHashMap != null) {
-                        int index = 0;
-                        for (Integer integer : cameraHashMap.keySet()) {
-                            Camera camera = cameraHashMap.get(integer);
-                            if (camera != null && index++ == 2) {
-                                showCameraInfoDialog(integer, camera);
-                                break;
-                            }
-                        }
-                    }
-                }
-                break;
             case R.id.btn:
                 startAllCameraPreview();
                 break;
@@ -1320,5 +1347,19 @@ public class MainActivity extends Activity implements MediaRecorder.OnErrorListe
                         }
                     }
                 };
+    }
+
+    //隐藏虚拟按键，并且全屏
+    protected void hideBottomUIMenu() {
+        // lower api
+        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) {
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= 19) { //for new api versions.
+            View decorView = this.getWindow().getDecorView();
+            int uiOptions = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            decorView.setSystemUiVisibility(uiOptions);
+        }
     }
 }

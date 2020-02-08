@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">NextVoo</string>
+    <string name="app_name">Nexvoo</string>
 
     <string name="please_restart_device_or_app">请尝试重启应用或重启设备(Err: %d)</string>
     <string name="start_prview">开始预览</string>

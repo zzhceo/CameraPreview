@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Environment;
-import android.os.SystemPropertiesProto;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -33,31 +32,30 @@ public class MyTextureView extends TextureView {
     // face detect face rect send like 0,0,100,100 : express face rect's left,top,right,bottom coordinate
     public static final String EXTRAS_FACE_DETECT_RECT = "extras.face.detect.rect";
 
+    public static boolean saveGetBitmap;
+    public static boolean saveClipBitmap;
+
     public MyTextureView(Context context) {
         super(context);
         this.context = context;
-//        registerBroadcastReceiver();
         Log.i(LOG_TAG, "MyTextureView(Context context)");
     }
 
     public MyTextureView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-//        registerBroadcastReceiver();
         Log.i(LOG_TAG, "MyTextureView(Context context, AttributeSet attrs)");
     }
 
     public MyTextureView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
-//        registerBroadcastReceiver();
         Log.i(LOG_TAG, "MyTextureView(Context context, AttributeSet attrs, int defStyleAttr)");
     }
 
     public MyTextureView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
-//        registerBroadcastReceiver();
         Log.i(LOG_TAG, "MyTextureView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes)");
     }
 
@@ -70,7 +68,7 @@ public class MyTextureView extends TextureView {
 
     @Override
     protected void onAttachedToWindow() {
-        Log.w(LOG_TAG, "A TextureView onAttachedToWindow() zhang.zuhui");
+        Log.i(LOG_TAG, "onAttachedToWindow()");
         super.onAttachedToWindow();
     }
 
@@ -116,9 +114,6 @@ public class MyTextureView extends TextureView {
                     + ", right=" + faceRect.right + ", bottom=" + faceRect.bottom);
         }
     }
-
-    public static boolean saveGetBitmap;
-    public static boolean saveClipBitmap;
 
     // add by zzh
     public void clipAndScaleDrawCanvas(Canvas canvas) {
@@ -176,8 +171,10 @@ public class MyTextureView extends TextureView {
     // add by zzh
     private void unRegisterBroadcastReceiver() {
         Log.i(LOG_TAG, "unRegisterBroadcastReceiver");
-        if (receiver != null)
+        if (receiver != null) {
             context.unregisterReceiver(receiver);
+            receiver = null;
+        }
     }
 
     // add by zzh
@@ -227,7 +224,7 @@ public class MyTextureView extends TextureView {
         windowManager.getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
-        Log.i(LOG_TAG, "getScreenWidthHeight width=" + width + ", height=" + height + ", getWidth=" + getMeasuredWidth() + ", getHeight=" + getMeasuredHeight());
+//        Log.i(LOG_TAG, "getScreenWidthHeight width=" + width + ", height=" + height + ", getWidth=" + getMeasuredWidth() + ", getHeight=" + getMeasuredHeight());
         return new int[]{width, height};
     }
 }

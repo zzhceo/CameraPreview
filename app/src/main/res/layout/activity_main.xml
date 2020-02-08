@@ -4,12 +4,13 @@
     android:background="@android:color/transparent">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/textureview_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
-        <com.zzh.camerapreview.MyTextureView
+        <!--<com.zzh.camerapreview.MyTextureView
             android:id="@+id/sfv1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -28,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:visibility="gone" />
+            android:visibility="gone" />-->
     </LinearLayout>
 
     <LinearLayout
@@ -362,14 +363,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/darker_gray"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
-    <ImageView
+    <com.zzh.camerapreview.ResizableImageView
         android:id="@+id/img_preview_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 <!--    @}-->
 
 </RelativeLayout>

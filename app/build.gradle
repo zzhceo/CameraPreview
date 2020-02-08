@@ -1,7 +1,11 @@
 import groovy.xml.XmlUtil
 
 apply plugin: 'com.android.application'
-
+static String getReleaseTime() {
+    TimeZone utc = TimeZone.getTimeZone("UTC")
+    utc.setRawOffset(8 * 60 * 60 * 1000)
+    return new Date().format("yyyyMMdd", utc)
+}
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -30,6 +34,14 @@ android {
             storePassword 'android'
             keyAlias 'platform'
             keyPassword 'android'
+        }
+    }
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == 'release' || variant.buildType.name == 'debug') {
+            variant.outputs.all {
+                def apkName = "CameraPreview_${getReleaseTime()}"
+                outputFileName = apkName + ".apk"
+            }
         }
     }
 }
