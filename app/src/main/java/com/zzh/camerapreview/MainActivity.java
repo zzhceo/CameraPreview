@@ -1327,7 +1327,8 @@ public class MainActivity extends Activity implements MediaRecorder.OnErrorListe
                                 byte[] data = (byte[]) msg.obj;
                                 if (data != null && data.length > 0) {
 //                                    long t1 = System.currentTimeMillis();
-                                    final Bitmap bitmap = nv21ToBitmap.nv21ToBitmap(data, previewWidth, previewHeight);
+                                    Bitmap bitmap = nv21ToBitmap.nv21ToBitmap(data, previewWidth, previewHeight);
+                                    bitmap = ImageUtils.convert(bitmap, 0, true, true);
 //                                    long t2 = System.currentTimeMillis();
 //                                    Log.e(TAG, "previewFrameHandler nv 21 to bitmap time= " + (t2 - t1) + " ms");
                                     final Bitmap rotateBitmap = ImageUtils.rotateBitmap(bitmap, 180);

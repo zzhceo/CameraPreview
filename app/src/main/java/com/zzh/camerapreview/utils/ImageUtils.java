@@ -217,4 +217,24 @@ public class ImageUtils {
 
         return result;
     }
+
+    //旋转+镜像
+    public static Bitmap convert(Bitmap a, int rotateAngle, boolean isMirror, boolean isHorizontalMirror) {
+        int w = a.getWidth();
+        int h = a.getHeight();
+        // 创建一个新的和SRC长度宽度一样的位图
+        Bitmap newb = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas cv = new Canvas(newb);
+        Matrix m = new Matrix();
+        if (isMirror) {
+            if (!isHorizontalMirror)
+                m.postScale(1, -1);   //镜像垂直翻转
+            else
+                m.postScale(-1, 1);   //镜像水平翻转
+        }
+        m.postRotate(rotateAngle, newb.getWidth() / 2, newb.getHeight() / 2);
+        Bitmap new2 = Bitmap.createBitmap(a, 0, 0, w, h, m, true);
+        cv.drawBitmap(new2, new Rect(0, 0, new2.getWidth(), new2.getHeight()), new Rect(0, 0, w, h), null);
+        return newb;
+    }
 }
