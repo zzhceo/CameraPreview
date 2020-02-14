@@ -25,7 +25,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +51,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends Activity implements MediaRecorder.OnErrorListener,
+public class MainActivity extends KeepScreenOnActivity implements MediaRecorder.OnErrorListener,
         MediaRecorder.OnInfoListener, View.OnClickListener {
     private static final String TAG = "MainActivity";
     private LinearLayout textureViewParent;
@@ -129,7 +128,6 @@ public class MainActivity extends Activity implements MediaRecorder.OnErrorListe
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-
         PermissionCheckUtil.requestAllPermissions(this);
 
         initView();

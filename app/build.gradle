@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 static String getReleaseTime() {
     TimeZone utc = TimeZone.getTimeZone("UTC")
     utc.setRawOffset(8 * 60 * 60 * 1000)
-    return new Date().format("yyyyMMdd", utc)
+    return new Date().format("yyyyMMddHHmm", utc)
 }
 android {
     compileSdkVersion 28

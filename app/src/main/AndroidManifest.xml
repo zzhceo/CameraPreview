@@ -29,5 +29,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".permission.PermissionCheckActivity"/>
+        <activity android:name=".KeepScreenOnActivity" />
     </application>
 </manifest>
